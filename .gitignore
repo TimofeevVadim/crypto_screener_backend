@@ -3,6 +3,7 @@
 .vscode/
 *.iml
 .DS_Store
-
+*.env
 # Игнорировать папку node_modules
 node_modules/
+dist/

@@ -1,10 +1,34 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import { BinanceModule } from './binance/binance.module';
+import { WebsocketModule } from './websocket/websocket.module';
+
+
+import { HttpAdapterHost } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import * as cors from 'cors';
+
+
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: `.${process.env.NODE_ENV}.env`
+    }),
+    UsersModule,
+    BinanceModule,
+    WebsocketModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
+  configure(app: NestExpressApplication) {
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+    app.getHttpAdapter().use(cors());
+  }
+}
