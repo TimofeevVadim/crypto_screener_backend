@@ -9,6 +9,14 @@ import { WebsocketModule } from './websocket/websocket.module';
 
 import { HttpAdapterHost } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { BybitModule } from './bybit/bybit.module';
+import { ScreenerModule } from './screener/screener.module';
+import { GateModule } from './gate/gate.module';
+import { OkxModule } from './okx/okx.module';
+import { BitgetModule } from './bitget/bitget.module';
+import { HuobiModule } from './huobi/huobi.module';
+import { KukoinModule } from './kukoin/kukoin.module';
+import { MexcModule } from './mexc/mexc.module';
 import * as cors from 'cors';
 
 
@@ -20,7 +28,15 @@ import * as cors from 'cors';
     }),
     UsersModule,
     BinanceModule,
-    WebsocketModule],
+    WebsocketModule,
+    BybitModule,
+    GateModule,
+    OkxModule,
+    BitgetModule,
+    HuobiModule,
+    KukoinModule,
+    MexcModule,
+    ScreenerModule,],
   controllers: [AppController],
   providers: [AppService],
 })

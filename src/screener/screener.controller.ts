@@ -1,0 +1,25 @@
+import { Controller, Get, Inject, OnModuleInit } from '@nestjs/common';
+import { ScreenerService } from './screener.service';
+
+import { timeouts } from 'src/utils/enums';
+
+@Controller('screener')
+export class ScreenerController {
+    private tickers: any[] = []
+    constructor (
+        private readonly screenerService: ScreenerService
+    ) {}
+    private onStart() {
+        setInterval(async () => {
+            console.log('onStart Screener')
+            this.tickers = this.screenerService.getTickers()
+        }, timeouts.screenerTimeout)
+    }
+    async onModuleInit() {
+        this.onStart()
+    }
+    @Get('/get-tickers')
+    async getMarketData(): Promise<any> {
+      return this.tickers
+    }
+}

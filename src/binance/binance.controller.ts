@@ -1,31 +1,32 @@
 import { Controller, Get, Inject, OnModuleInit } from '@nestjs/common';
 import { BinanceService } from './binance.service';
 
+import { timeouts } from 'src/utils/enums';
+
 @Controller('binance')
 export class BinanceController implements OnModuleInit {
-  private limitOrders: object = {};
-  private marketData: object = {}
-  private currencyPairs: string[] = ['btcusdt', 'ethusdt', 'bnbusdt'];
+  public static tickers: object = {}
 
   constructor(
     private readonly binanceService: BinanceService,
   ) {}
 
-  async onModuleInit() {
-    this.binanceService.marketDataConnect(this.currencyPairs).subscribe((data) => {
-        this.marketData[data.data.s] = data.data
-        });
-    this.binanceService.limitOrdersConnect(this.currencyPairs).subscribe((data) => {
-        this.limitOrders[data.s] = data
-        });
+  private async onStart() {
+    setInterval(async () => {
+      console.log('onStart Binance')
+      BinanceController.tickers = await this.binanceService.getTickets()
+    }, timeouts.tickersTimeout)
   }
 
-  @Get('/get-limit-orders')
-  async getLimitOrders(): Promise<any> {
-    return this.limitOrders
+  public static getTickers() {
+    return this.tickers
   }
-  @Get('/get-market-data')
-  async getMarketData(): Promise<any> {
-    return this.marketData
+
+  async onModuleInit() {
+    this.onStart()
   }
+  // @Get('/get-market-data')
+  // async getMarketData(): Promise<any> {
+  //   return this.tickers
+  // }
 }
