@@ -19,7 +19,7 @@ export class ScreenerController {
         this.onStart()
     }
     @Get('/get-tickers')
-    async getMarketData(): Promise<any> {
+    async getTickers(): Promise<any> {
       return this.tickers
     }
 }
