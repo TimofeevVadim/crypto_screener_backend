@@ -17,7 +17,12 @@ export class BinanceController implements OnModuleInit {
       BinanceController.tickers = await this.binanceService.getTickets()
     }, timeouts.tickersTimeout)
   }
-
+  public static async getOrderBook(symbol) {
+    return await BinanceService.getOrderBook(symbol)
+  }
+  public static async getDepositAddress(currency) {
+    return await BinanceService.getDepositAddress(currency)
+  }
   public static getTickers() {
     return this.tickers
   }

@@ -17,7 +17,12 @@ export class BitgetController {
       BitgetController.tickers = await this.bitgetService.getTickets()
     }, timeouts.tickersTimeout)
   }
-
+  public static async getOrderBook(symbol) {
+    return await BitgetService.getOrderBook(symbol)
+  }
+  public static async getDepositAddress(currency) {
+    return await BitgetService.getDepositAddress(currency)
+  }
   public static getTickers() {
     return this.tickers
   }

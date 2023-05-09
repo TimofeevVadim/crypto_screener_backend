@@ -12,7 +12,7 @@ export class ScreenerController {
     private onStart() {
         setInterval(async () => {
             console.log('onStart Screener')
-            this.tickers = this.screenerService.getTickers()
+            this.tickers = await this.screenerService.getTickers()
         }, timeouts.screenerTimeout)
     }
     async onModuleInit() {

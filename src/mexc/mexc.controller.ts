@@ -17,7 +17,12 @@ export class MexcController {
         MexcController.tickers = await this.mexcService.getTickets()
         }, timeouts.tickersTimeout)
     }
-
+    public static async getOrderBook(symbol) {
+        return await MexcService.getOrderBook(symbol)
+    }
+    public static async getDepositAddress(currency) {
+        return await MexcService.getDepositAddress(currency)
+      }
     public static getTickers() {
         return this.tickers
     }

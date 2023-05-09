@@ -14,10 +14,15 @@ export class OkxController {
   private async onStart() {
     setInterval(async () => {
       console.log('onStart okx')
-      // OkxController.tickers = await this.okxService.getTickets()
+      OkxController.tickers = await this.okxService.getTickets()
     }, timeouts.tickersTimeout)
   }
-
+  public static async getOrderBook(symbol) {
+    return await OkxService.getOrderBook(symbol)
+  }
+  public static async getDepositAddress(currency) {
+    return await OkxService.getDepositAddress(currency)
+  }
   public static getTickers() {
     return this.tickers
   }

@@ -7,7 +7,7 @@ export const onFilterCurrencyPairs = ({ tickers }) => {
             // console.log(ticker, 'ticker')
             const pattern = /:(USDT)$/;
             const symbol = ticker.symbol.includes(':USDT') ? ticker.symbol.replace(pattern, '') : ticker.symbol
-            filteredTickers[symbol] = {
+            filteredTickers[ticker.symbol] = {
                 ask: ticker.ask,
                 bid: ticker.bid,
                 percentage: ticker.percentage,
@@ -115,7 +115,7 @@ const onPushFinalyObject = (result, {lTicker, hTicker, pair, lName, hName}) => {
         lPercentage: mPercentage,
         hPercentage: cPercentage
     })  
-    if(finalyObject.persent > 1 && finalyObject.persent < 30 && finalyObject.lover.volumeUSDT > 50 && finalyObject.high.volumeUSDT > 100) {
+    if(finalyObject.persent > 2 && finalyObject.persent < 40 && finalyObject.lover.volumeUSDT > 5 && finalyObject.high.volumeUSDT > 5) {
         result.push(finalyObject) 
     }
 }
@@ -175,6 +175,46 @@ export const onFindPriceDifference = (tickers) => {
     return result
 }
 
+export const parseOrderBook = (asks, bids, ticker) => {
+    
+    let loverPrice = 0
+    let highPrice = 0
+    let loverVolume = 0
+    let highVolume = 0
+    let persent = ticker.persent
+    let index = 0
+    let currentPersent = ticker.persent
 
+    while (currentPersent > 1.5 && index < asks.length) {
+       const ask = asks[index]
+       const bid = bids[index]
+       if(ask && ask.length === 2 && bid && bid.length === 2) {
+          currentPersent = ((bid[0] - ask[0]) / ask[0]) * 100
+          if(currentPersent > 1.5) {
+             persent = currentPersent
+             loverVolume += ask[1] * ask[0]
+             highVolume += bid[1] * bid[0]
+             loverPrice = ask[0]
+             highPrice = bid[0]
+          }
+       }
 
-export default { onFilterCurrencyPairs, onFindPriceDifference }
+       index = index + 1
+    }
+    const minLoverVolume = asks[0][0] * asks[0][1]
+    const minHighVolume = bids[0][0] * bids[0][1]
+    const maxPersent = ((bids[0][0] - asks[0][0]) / asks[0][0]) * 100
+
+    ticker.lover.allVolumeUSDT = parseFloat(loverVolume.toFixed(0))
+    ticker.lover.volumeUSDT = parseFloat(minLoverVolume.toFixed(0))
+    ticker.lover.maxPrice = loverPrice
+    ticker.high.allVolumeUSDT = parseFloat(highVolume.toFixed(0))
+    ticker.high.volumeUSDT = parseFloat(minHighVolume.toFixed(0))
+    ticker.high.maxPrice = highPrice
+    ticker.minPersent = parseFloat(persent.toFixed(2))
+    ticker.persent = parseFloat(maxPersent.toFixed(2))
+
+    return ticker
+}
+
+export default { onFilterCurrencyPairs, onFindPriceDifference, parseOrderBook }

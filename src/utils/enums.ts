@@ -1,6 +1,6 @@
 export const timeouts = {
-    tickersTimeout: 10000,
-    screenerTimeout: 10000,
+    tickersTimeout: 60000,
+    screenerTimeout: 60000,
 }
 
 export const urls = {

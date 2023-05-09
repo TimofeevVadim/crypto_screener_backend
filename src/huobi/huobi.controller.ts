@@ -13,15 +13,20 @@ export class HuobiController {
 
     private async onStart() {
         setInterval(async () => {
-        console.log('onStart Huobi')
-        HuobiController.tickers = await this.huobiService.getTickets()
+            console.log('onStart Huobi')
+            HuobiController.tickers = await this.huobiService.getTickets()
         }, timeouts.tickersTimeout)
     }
 
     public static getTickers() {
         return this.tickers
     }
-
+    public static async getOrderBook(symbol) {
+        return await HuobiService.getOrderBook(symbol)
+    }
+    public static async getDepositAddress(currency) {
+        return await HuobiService.getDepositAddress(currency)
+      }
     async onModuleInit() {
         this.onStart()
     }

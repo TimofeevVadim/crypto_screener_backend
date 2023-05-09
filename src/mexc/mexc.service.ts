@@ -5,16 +5,23 @@ import { onFilterCurrencyPairs } from 'src/utils/helpers';
 
 @Injectable()
 export class MexcService {
-    private exchange: Exchange = {} as Exchange;
+    private static exchange: Exchange = {} as Exchange;
     constructor() {
-        this.exchange = new mexc();
+      MexcService.exchange = new mexc();
     }
     /**
      * getTickets
      */
+
+    public static async getOrderBook(symbol) {
+      return await MexcService.exchange.fetchOrderBook(symbol);
+    }
+    public static async getDepositAddress(currency) {
+      return await MexcService.exchange.fetchDepositAddress(currency);
+    }
     public async getTickets(): Promise<{[key: string]: Ticker}> {
         try {
-            const tickers = await this.exchange.fetchTickers();
+            const tickers = await MexcService.exchange.fetchTickers();
             return onFilterCurrencyPairs({ tickers: Object.values(tickers) });
           } catch (error) {
             console.log(error)

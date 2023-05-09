@@ -4,16 +4,23 @@ import { onFilterCurrencyPairs } from 'src/utils/helpers';
 
 @Injectable()
 export class GateService {
-    private exchange: Exchange = {} as Exchange;
+    private static exchange: Exchange = {} as Exchange;
     constructor() {
-        this.exchange = new gate();
+      GateService.exchange = new gate();
     }
   /**
    * getTickets
    */
+
+  public static async getOrderBook(symbol) {
+    return await GateService.exchange.fetchOrderBook(symbol);
+  }
+  public static async getDepositAddress(currency) {
+    return await GateService.exchange.fetchDepositAddress(currency);
+  }
   public async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
-      const tickers = await this.exchange.fetchTickers();
+      const tickers = await GateService.exchange.fetchTickers();
       return onFilterCurrencyPairs({ tickers: Object.values(tickers) });
     } catch (error) {
       console.log(error)

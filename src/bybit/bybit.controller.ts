@@ -21,7 +21,12 @@ export class BybitController implements OnModuleInit {
   public static getTickers() {
     return this.tickers
   }
-
+  public static async getOrderBook(symbol) {
+    return await BybitService.getOrderBook(symbol)
+  }
+  public static async getDepositAddress(currency) {
+    return await BybitService.getDepositAddress(currency)
+  }
   async onModuleInit() {
     this.onStart()
   }
