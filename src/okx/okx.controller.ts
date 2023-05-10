@@ -23,6 +23,9 @@ export class OkxController {
   public static async getDepositAddress(currency) {
     return await OkxService.getDepositAddress(currency)
   }
+  public static async getFundingFees() {
+    return await OkxService.getFundingFees()
+  }
   public static getTickers() {
     return this.tickers
   }

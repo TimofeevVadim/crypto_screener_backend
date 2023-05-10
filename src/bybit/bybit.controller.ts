@@ -27,6 +27,9 @@ export class BybitController implements OnModuleInit {
   public static async getDepositAddress(currency) {
     return await BybitService.getDepositAddress(currency)
   }
+  public static async getFundingFees() {
+    return await BybitService.getFundingFees()
+  }
   async onModuleInit() {
     this.onStart()
   }

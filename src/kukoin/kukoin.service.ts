@@ -19,6 +19,9 @@ export class KukoinService {
     public static async getDepositAddress(currency) {
       return await KukoinService.exchange.fetchDepositAddress(currency);
     }
+    public static async getFundingFees() {
+      return await KukoinService.exchange.fetchTransactionFees();
+    }
     public async getTickets(): Promise<{[key: string]: Ticker}> {
         try {
             const tickers = await KukoinService.exchange.fetchTickers();

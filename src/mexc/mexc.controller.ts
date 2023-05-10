@@ -22,7 +22,10 @@ export class MexcController {
     }
     public static async getDepositAddress(currency) {
         return await MexcService.getDepositAddress(currency)
-      }
+    }
+    public static async getFundingFees() {
+        return await MexcService.getFundingFees()
+    }
     public static getTickers() {
         return this.tickers
     }

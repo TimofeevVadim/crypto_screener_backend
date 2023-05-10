@@ -20,6 +20,9 @@ export class BybitService {
   public static async getDepositAddress(currency) {
     return await BybitService.exchange.fetchDepositAddress(currency);
   }
+  public static async getFundingFees() {
+    return await BybitService.exchange.fetchTransactionFees();
+  }
   public async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
       const tickers = await BybitService.exchange.fetchTickers();

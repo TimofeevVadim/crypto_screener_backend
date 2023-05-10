@@ -19,6 +19,9 @@ export class HuobiService {
     public static async getDepositAddress(currency) {
       return await HuobiService.exchange.fetchDepositAddress(currency);
     }
+    public static async getFundingFees() {
+      return await HuobiService.exchange.fetchTransactionFees();
+    }
     public async getTickets(): Promise<{[key: string]: Ticker}> {
       try {
         const tickers = await HuobiService.exchange.fetchTickers();

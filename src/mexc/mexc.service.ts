@@ -19,6 +19,9 @@ export class MexcService {
     public static async getDepositAddress(currency) {
       return await MexcService.exchange.fetchDepositAddress(currency);
     }
+    public static async getFundingFees() {
+      return await MexcService.exchange.fetchTransactionFees();
+    }
     public async getTickets(): Promise<{[key: string]: Ticker}> {
         try {
             const tickers = await MexcService.exchange.fetchTickers();

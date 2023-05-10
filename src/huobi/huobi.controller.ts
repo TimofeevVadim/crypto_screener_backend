@@ -26,6 +26,9 @@ export class HuobiController {
     }
     public static async getDepositAddress(currency) {
         return await HuobiService.getDepositAddress(currency)
+    }
+    public static async getFundingFees() {
+        return await HuobiService.getFundingFees()
       }
     async onModuleInit() {
         this.onStart()

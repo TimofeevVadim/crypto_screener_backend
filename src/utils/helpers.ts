@@ -4,10 +4,9 @@ export const onFilterCurrencyPairs = ({ tickers }) => {
     const filteredTickers = {}
     tickers.forEach(ticker => {
         if(ticker.symbol.includes('/USDT')) {
-            // console.log(ticker, 'ticker')
             const pattern = /:(USDT)$/;
             const symbol = ticker.symbol.includes(':USDT') ? ticker.symbol.replace(pattern, '') : ticker.symbol
-            filteredTickers[ticker.symbol] = {
+            filteredTickers[symbol] = {
                 ask: ticker.ask,
                 bid: ticker.bid,
                 percentage: ticker.percentage,
@@ -51,7 +50,7 @@ const getFinalyObject = ({
     const int = ((hPrice - lPrice) / lPrice) * 100
     const persent = parseFloat(int.toFixed(2))
     const {time, minute} = getTime()
-
+ 
     return { 
         persent,
         time,
@@ -63,7 +62,7 @@ const getFinalyObject = ({
             exchange: lExchange,
             price: lPrice,
             volume: askVolume,
-            volumeUSDT: parseFloat(askVolumeUSDT.toFixed(0)),
+            volumeUSDT: parseFloat(askVolumeUSDT.toFixed(0)) ,
             average: lAverage ? parseFloat(lAverage.toFixed(2)) : lAverage,
             quoteVolume: lQuoteVolume,
             percentage: lPercentage ? parseFloat(lPercentage.toFixed(2)) : lPercentage
@@ -73,7 +72,7 @@ const getFinalyObject = ({
             exchange: hExchange,
             price: hPrice,
             volume: bidVolume,
-            volumeUSDT: parseFloat(bidVolumeUSDT.toFixed(0)),
+            volumeUSDT:  parseFloat(bidVolumeUSDT.toFixed(0)),
             average: hAverage ? parseFloat(hAverage.toFixed(2)) : hAverage,
             quoteVolume: hQuoteVolume,
             percentage: hPercentage ? parseFloat(hPercentage.toFixed(2)) : hPercentage
@@ -114,8 +113,14 @@ const onPushFinalyObject = (result, {lTicker, hTicker, pair, lName, hName}) => {
         hQuoteVolume: cQuoteVolume,
         lPercentage: mPercentage,
         hPercentage: cPercentage
-    })  
-    if(finalyObject.persent > 2 && finalyObject.persent < 40 && finalyObject.lover.volumeUSDT > 5 && finalyObject.high.volumeUSDT > 5) {
+    })
+    
+    if(
+        finalyObject.persent > 2 &&
+        finalyObject.persent < 40 &&
+        finalyObject.lover.volumeUSDT > 5 &&
+        finalyObject.high.volumeUSDT > 5 
+    ) {
         result.push(finalyObject) 
     }
 }
@@ -175,7 +180,7 @@ export const onFindPriceDifference = (tickers) => {
     return result
 }
 
-export const parseOrderBook = (asks, bids, ticker) => {
+export const parseOrderBook = ({asks, bids, ticker, loverFee, highFee }) => {
     
     let loverPrice = 0
     let highPrice = 0
@@ -186,7 +191,7 @@ export const parseOrderBook = (asks, bids, ticker) => {
     let currentPersent = ticker.persent
 
     while (currentPersent > 1.5 && index < asks.length) {
-       const ask = asks[index]
+       const ask = asks[index] 
        const bid = bids[index]
        if(ask && ask.length === 2 && bid && bid.length === 2) {
           currentPersent = ((bid[0] - ask[0]) / ask[0]) * 100
@@ -208,9 +213,11 @@ export const parseOrderBook = (asks, bids, ticker) => {
     ticker.lover.allVolumeUSDT = parseFloat(loverVolume.toFixed(0))
     ticker.lover.volumeUSDT = parseFloat(minLoverVolume.toFixed(0))
     ticker.lover.maxPrice = loverPrice
+    ticker.lover.fee = loverFee
     ticker.high.allVolumeUSDT = parseFloat(highVolume.toFixed(0))
     ticker.high.volumeUSDT = parseFloat(minHighVolume.toFixed(0))
     ticker.high.maxPrice = highPrice
+    ticker.high.fee = highFee
     ticker.minPersent = parseFloat(persent.toFixed(2))
     ticker.persent = parseFloat(maxPersent.toFixed(2))
 

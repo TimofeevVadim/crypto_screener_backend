@@ -20,6 +20,9 @@ export class BitgetService {
     public static async getDepositAddress(currency) {
       return await BitgetService.exchange.fetchDepositAddress(currency);
     }
+    public static async getFundingFees() {
+      return await BitgetService.exchange.fetchTransactionFees();
+    }
     public async getTickets(): Promise<{[key: string]: Ticker}> {
       try {
         const tickers = await BitgetService.exchange.fetchTickers();

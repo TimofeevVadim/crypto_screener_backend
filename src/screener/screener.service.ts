@@ -23,7 +23,7 @@ export class ScreenerService {
       kukoin: KukoinController
    }
    public async getCompliteInformation(ticker) {
-      // const currency = ticker.pair.split('/')[0]
+      const currency = ticker.pair.split('/')[0]
       // const loverAddress = await this.controllers[ticker.lover.exchange].getDepositAddress(currency);
       // const highAddress = await this.controllers[ticker.high.exchange].getDepositAddress(currency);
       // console.log(currency, 'currency')
@@ -32,11 +32,37 @@ export class ScreenerService {
       // if(loverAddress && highAddress) {
 
 
-         const { asks } = await this.controllers[ticker.lover.exchange].getOrderBook(ticker.pair);
-         const { bids } = await this.controllers[ticker.high.exchange].getOrderBook(ticker.pair);
-         return parseOrderBook(asks, bids, ticker)
+         try {
+            const { asks } = await this.controllers[ticker.lover.exchange].getOrderBook(ticker.pair);
+            const { bids } = await this.controllers[ticker.high.exchange].getOrderBook(ticker.pair);
 
-         
+            // let loverFees = null
+            // let highFees = null
+
+            // try {
+            //    loverFees = await this.controllers[ticker.lover.exchange].getFundingFees();
+            // } catch (error) {
+            //    console.log(error, 'fees error')
+            // }
+            // try {
+            //    highFees = await this.controllers[ticker.high.exchange].getFundingFees();
+            // } catch (error) {
+            //    console.log(error, 'fees error')
+            // }
+            // const loverFee = loverFees ? loverFees[currency].withdraw.fee : null;
+            // const highFee = highFees ? highFees[currency].deposit.fee : null;
+
+            const loverFee = null;
+            const highFee = null;
+
+
+            return parseOrderBook({asks, bids, ticker,loverFee, highFee })
+         } catch (error) {
+            console.log(error)
+            return null
+         }
+
+
       // }
       // return null
    }

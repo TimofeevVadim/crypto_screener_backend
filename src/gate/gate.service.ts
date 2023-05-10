@@ -18,6 +18,9 @@ export class GateService {
   public static async getDepositAddress(currency) {
     return await GateService.exchange.fetchDepositAddress(currency);
   }
+  public static async getFundingFees() {
+    return await GateService.exchange.fetchTransactionFees();
+  }
   public async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
       const tickers = await GateService.exchange.fetchTickers();

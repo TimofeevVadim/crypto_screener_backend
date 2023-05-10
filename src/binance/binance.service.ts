@@ -23,6 +23,9 @@ export class BinanceService {
   public static async getDepositAddress(currency) {
     return await BinanceService.exchange.fetchDepositAddress(currency);
   }
+  public static async getFundingFees() {
+    return await BinanceService.exchange.fetchTransactionFees();
+  }
   public async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
       const tickers = await BinanceService.exchange.fetchTickers();

@@ -23,6 +23,9 @@ export class BinanceController implements OnModuleInit {
   public static async getDepositAddress(currency) {
     return await BinanceService.getDepositAddress(currency)
   }
+  public static async getFundingFees() {
+    return await BinanceService.getFundingFees()
+  }
   public static getTickers() {
     return this.tickers
   }

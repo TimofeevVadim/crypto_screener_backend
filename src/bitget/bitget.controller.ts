@@ -23,6 +23,9 @@ export class BitgetController {
   public static async getDepositAddress(currency) {
     return await BitgetService.getDepositAddress(currency)
   }
+  public static async getFundingFees() {
+    return await BitgetService.getFundingFees()
+  }
   public static getTickers() {
     return this.tickers
   }

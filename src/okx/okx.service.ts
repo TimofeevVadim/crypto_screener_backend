@@ -19,6 +19,9 @@ export class OkxService {
   public static async getDepositAddress(currency) {
     return await OkxService.exchange.fetchDepositAddress(currency);
   }
+  public static async getFundingFees() {
+    return await OkxService.exchange.fetchTransactionFees();
+  }
   public async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
         const tickers = await OkxService.exchange.fetchTickers();
