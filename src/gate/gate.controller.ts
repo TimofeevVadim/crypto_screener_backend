@@ -10,12 +10,12 @@ export class GateController {
   constructor(
     private readonly gateService: GateService,
   ) {}
-
-  private async onStart() {
-    setInterval(async () => {
-      console.log('onStart Gate')
-      GateController.tickers = await this.gateService.getTickets()
-    }, timeouts.tickersTimeout)
+  
+  public static async getTickets() {
+    return await GateService.getTickets()
+  }
+  public static async fetchCurrencies() {
+    return await GateService.fetchCurrencies()
   }
   public static async getOrderBook(symbol) {
     return await GateService.getOrderBook(symbol)
@@ -31,6 +31,5 @@ export class GateController {
   }
 
   async onModuleInit() {
-    this.onStart()
   }
 }

@@ -11,11 +11,11 @@ export class OkxController {
     private readonly okxService: OkxService,
   ) {}
 
-  private async onStart() {
-    setInterval(async () => {
-      console.log('onStart okx')
-      OkxController.tickers = await this.okxService.getTickets()
-    }, timeouts.tickersTimeout)
+  public static async getTickets() {
+    return await OkxService.getTickets()
+  }
+  public static async fetchCurrencies() {
+    return await OkxService.fetchCurrencies()
   }
   public static async getOrderBook(symbol) {
     return await OkxService.getOrderBook(symbol)
@@ -31,6 +31,5 @@ export class OkxController {
   }
 
   async onModuleInit() {
-    this.onStart()
   }
 }

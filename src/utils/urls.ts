@@ -8,7 +8,7 @@ const pairsGetters = {
     kukoin: (pair) => pair.replace('/', '-'),
     mexc: (pair) => pair.replace("/", "_") + '?_from=search',
     okx: (pair) => '#',
-    bitget: (pair) => pair.replace("/", "_") + '_SPBL?type=spot',
+    bitget: (pair) => pair.replace("/", "") + '_SPBL?type=spot',
 }
 
 

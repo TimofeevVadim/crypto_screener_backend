@@ -17,12 +17,15 @@ export class OkxService {
     return await OkxService.exchange.fetchOrderBook(symbol);
   }
   public static async getDepositAddress(currency) {
-    return await OkxService.exchange.fetchDepositAddress(currency);
+    return await OkxService.exchange.fetchDepositAddresses([currency]);
+  }
+  public static async fetchCurrencies() {
+    return await OkxService.exchange.fetchCurrencies();;
   }
   public static async getFundingFees() {
     return await OkxService.exchange.fetchTransactionFees();
   }
-  public async getTickets(): Promise<{[key: string]: Ticker}> {
+  public static async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
         const tickers = await OkxService.exchange.fetchTickers();
         return onFilterCurrencyPairs({ tickers: Object.values(tickers) });

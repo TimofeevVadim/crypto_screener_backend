@@ -8,10 +8,11 @@ export class BinanceService {
   private static exchange: Exchange = {} as Exchange;
   constructor() {
     const apiKey = process.env.BINANCE_API_KEY
-    const apiSecret = process.env.BINANCE_API_SECRET
+    const secret = process.env.BINANCE_API_SECRET
     BinanceService.exchange = new binance({
       apiKey: apiKey,
-      secret: apiSecret
+      secret: secret,
+      enableRateLimit: true
     });
   }
   /**
@@ -21,12 +22,15 @@ export class BinanceService {
     return await BinanceService.exchange.fetchOrderBook(symbol);
   }
   public static async getDepositAddress(currency) {
-    return await BinanceService.exchange.fetchDepositAddress(currency);
+    return await BinanceService.exchange.fetchDepositAddresses([currency]);;
+  }
+  public static async fetchCurrencies() {
+    return await BinanceService.exchange.fetchCurrencies();;
   }
   public static async getFundingFees() {
     return await BinanceService.exchange.fetchTransactionFees();
   }
-  public async getTickets(): Promise<{[key: string]: Ticker}> {
+  public static async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
       const tickers = await BinanceService.exchange.fetchTickers();
       return onFilterCurrencyPairs({ tickers: Object.values(tickers) });

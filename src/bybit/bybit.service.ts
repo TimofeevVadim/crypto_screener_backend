@@ -8,7 +8,13 @@ import { onFilterCurrencyPairs } from 'src/utils/helpers';
 export class BybitService {
     private static exchange: Exchange = {} as Exchange;
     constructor() {
-      BybitService.exchange = new bybit();
+      const apiKey = process.env.BYBIT_API_KEY
+      const secret = process.env.BYBIT_API_SECRET
+      BybitService.exchange = new bybit({
+        apiKey,
+        secret,
+        enableRateLimit: true
+      });
     }
   /**
    * getTickets
@@ -18,12 +24,15 @@ export class BybitService {
     return await BybitService.exchange.fetchOrderBook(symbol);
   }
   public static async getDepositAddress(currency) {
-    return await BybitService.exchange.fetchDepositAddress(currency);
+    return await BybitService.exchange.fetchDepositAddresses([currency]);
+  }
+  public static async fetchCurrencies() {
+    return await BybitService.exchange.fetchCurrencies();;
   }
   public static async getFundingFees() {
     return await BybitService.exchange.fetchTransactionFees();
   }
-  public async getTickets(): Promise<{[key: string]: Ticker}> {
+  public static async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
       const tickers = await BybitService.exchange.fetchTickers();
       return onFilterCurrencyPairs({ tickers: Object.values(tickers) });

@@ -8,98 +8,71 @@ import { HuobiController } from 'src/huobi/huobi.controller';
 import { KukoinController } from 'src/kukoin/kukoin.controller';
 import { MexcController } from 'src/mexc/mexc.controller';
 
-import { onFindPriceDifference, parseOrderBook } from 'src/utils/helpers';
+import { onFindPriceDifference, parseOrderBook, addInformationPossibilityTranslation } from 'src/utils/helpers';
 
 @Injectable()
 export class ScreenerService {
    public controllers = {
       bybit: BybitController,
       binance: BinanceController,
-      okx: OkxController,
-      gate: GateController,
+      // okx: OkxController,
+      // gate: GateController,
       bitget: BitgetController,
       huobi: HuobiController,
       mexc: MexcController,
-      kukoin: KukoinController
+      // kukoin: KukoinController
    }
    public async getCompliteInformation(ticker) {
       const currency = ticker.pair.split('/')[0]
-      // const loverAddress = await this.controllers[ticker.lover.exchange].getDepositAddress(currency);
-      // const highAddress = await this.controllers[ticker.high.exchange].getDepositAddress(currency);
-      // console.log(currency, 'currency')
-      // console.log(loverAddress, 'loverAddress')
-      // console.log(highAddress, 'highAddress')
-      // if(loverAddress && highAddress) {
-
 
          try {
             const { asks } = await this.controllers[ticker.lover.exchange].getOrderBook(ticker.pair);
             const { bids } = await this.controllers[ticker.high.exchange].getOrderBook(ticker.pair);
 
-            // let loverFees = null
-            // let highFees = null
 
-            // try {
-            //    loverFees = await this.controllers[ticker.lover.exchange].getFundingFees();
-            // } catch (error) {
-            //    console.log(error, 'fees error')
-            // }
-            // try {
-            //    highFees = await this.controllers[ticker.high.exchange].getFundingFees();
-            // } catch (error) {
-            //    console.log(error, 'fees error')
-            // }
-            // const loverFee = loverFees ? loverFees[currency].withdraw.fee : null;
-            // const highFee = highFees ? highFees[currency].deposit.fee : null;
-
-            const loverFee = null;
-            const highFee = null;
-
-
-            return parseOrderBook({asks, bids, ticker,loverFee, highFee })
+            return parseOrderBook({ asks, bids, ticker })
          } catch (error) {
             console.log(error)
             return null
          }
 
-
-      // }
-      // return null
    }
-   public async getFinalyTickers(tickers) {
+   public async getFinalyTickers(tickers, currencys) {
       const finalyTickers = []
-      console.log('start')
       for (let i = 0; i < tickers.length; i++) {
          const ticker = await this.getCompliteInformation(tickers[i]);
          if(ticker) {
-            finalyTickers.push(ticker)
+            finalyTickers.push(addInformationPossibilityTranslation(ticker, currencys))
          }
       }
-      console.log('end')
       return finalyTickers
    }
+   public async getCurrencies() {
+      const data = {}
+      const exchanges = Object.keys(this.controllers)
+      for (let i = 0; i < exchanges.length; i++) {
+         const currencys = await this.controllers[exchanges[i]].fetchCurrencies();
+         data[exchanges[i]] = currencys
+      }
+      return data
+   }
+   public async fetchTickers() {
+      const data = {}
+      const exchanges = Object.keys(this.controllers)
+      for (let i = 0; i < exchanges.length; i++) {
+         const tickers = await this.controllers[exchanges[i]].getTickets();
+         data[exchanges[i]] = tickers
+      }
+      return data
+   }
    public async getTickers() {
-        const binanceTickers = this.controllers.binance.getTickers()
-        const bybitTickers = this.controllers.bybit.getTickers()
-        const gateTickers = this.controllers.gate.getTickers()
-        const okxTickers = this.controllers.okx.getTickers()
-        const bitgetTickers = this.controllers.bitget.getTickers()
-        const huobiTickers = this.controllers.huobi.getTickers()
-        const kukoinTickers = this.controllers.kukoin.getTickers()
-        const mexcTickers = this.controllers.mexc.getTickers()
-        const tickers = onFindPriceDifference({ 
-            binance: binanceTickers,
-            bybit: bybitTickers,
-            gate: gateTickers,
-            okx: okxTickers,
-            bitget: bitgetTickers,
-            huobi: huobiTickers,
-            kukoin: kukoinTickers,
-            mexc: mexcTickers,
-        })
+      console.log('start')
+      const currencys = await this.getCurrencies()
+      const currentTickers = await this.fetchTickers()
+      const tickers = onFindPriceDifference(currentTickers)
 
-        const finalyTickers = await this.getFinalyTickers(tickers)
-
-        return finalyTickers
+        const finalyTickers = await this.getFinalyTickers(tickers, currencys)
+      console.log('end')
+      return finalyTickers.filter( ticker => ticker.hasChain )
    }
 }

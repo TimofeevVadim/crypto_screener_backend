@@ -10,12 +10,16 @@ export class BinanceController implements OnModuleInit {
   constructor(
     private readonly binanceService: BinanceService,
   ) {}
+  onModuleInit() {
+  }
 
   private async onStart() {
-    setInterval(async () => {
-      console.log('onStart Binance')
-      BinanceController.tickers = await this.binanceService.getTickets()
-    }, timeouts.tickersTimeout)
+  }
+  public static async getTickets() {
+    return await BinanceService.getTickets()
+  }
+  public static async fetchCurrencies() {
+    return await BinanceService.fetchCurrencies()
   }
   public static async getOrderBook(symbol) {
     return await BinanceService.getOrderBook(symbol)
@@ -26,15 +30,4 @@ export class BinanceController implements OnModuleInit {
   public static async getFundingFees() {
     return await BinanceService.getFundingFees()
   }
-  public static getTickers() {
-    return this.tickers
-  }
-
-  async onModuleInit() {
-    this.onStart()
-  }
-  // @Get('/get-market-data')
-  // async getMarketData(): Promise<any> {
-  //   return this.tickers
-  // }
 }

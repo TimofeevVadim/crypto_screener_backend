@@ -16,12 +16,15 @@ export class GateService {
     return await GateService.exchange.fetchOrderBook(symbol);
   }
   public static async getDepositAddress(currency) {
-    return await GateService.exchange.fetchDepositAddress(currency);
+    return await GateService.exchange.fetchDepositAddresses([currency]);
+  }
+  public static async fetchCurrencies() {
+    return await GateService.exchange.fetchCurrencies();;
   }
   public static async getFundingFees() {
     return await GateService.exchange.fetchTransactionFees();
   }
-  public async getTickets(): Promise<{[key: string]: Ticker}> {
+  public static async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
       const tickers = await GateService.exchange.fetchTickers();
       return onFilterCurrencyPairs({ tickers: Object.values(tickers) });

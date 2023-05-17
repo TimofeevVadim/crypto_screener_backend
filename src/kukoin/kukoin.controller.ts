@@ -10,16 +10,16 @@ export class KukoinController {
     constructor(
         private readonly kukoinService: KukoinService,
     ) {}
-
-    private async onStart() {
-        setInterval(async () => {
-            console.log('onStart Kukoin')
-            KukoinController.tickers = await this.kukoinService.getTickets()
-        }, timeouts.tickersTimeout)
+    
+    public static async getTickets() {
+        return await KukoinService.getTickets()
     }
     public static async getOrderBook(symbol) {
         return await KukoinService.getOrderBook(symbol)
     }
+    public static async fetchCurrencies() {
+        return await KukoinService.fetchCurrencies()
+      }
     public static async getDepositAddress(currency) {
         return await KukoinService.getDepositAddress(currency)
     }
@@ -31,6 +31,6 @@ export class KukoinController {
     }
 
     async onModuleInit() {
-        this.onStart()
+        // this.onStart()
     }
 }

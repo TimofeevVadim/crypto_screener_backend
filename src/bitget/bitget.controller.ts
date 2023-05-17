@@ -11,11 +11,17 @@ export class BitgetController {
     private readonly bitgetService: BitgetService,
   ) {}
 
-  private async onStart() {
-    setInterval(async () => {
-      console.log('onStart Bitget')
-      BitgetController.tickers = await this.bitgetService.getTickets()
-    }, timeouts.tickersTimeout)
+  // private async onStart() {
+  //   setInterval(async () => {
+  //     console.log('onStart Bitget')
+  //     BitgetController.tickers = await this.bitgetService.getTickets()
+  //   }, timeouts.tickersTimeout)
+  // }
+  public static async getTickets() {
+    return await BitgetService.getTickets()
+  }
+  public static async fetchCurrencies() {
+    return await BitgetService.fetchCurrencies()
   }
   public static async getOrderBook(symbol) {
     return await BitgetService.getOrderBook(symbol)
@@ -31,6 +37,6 @@ export class BitgetController {
   }
 
   async onModuleInit() {
-    this.onStart()
+    // this.onStart()
   }
 }

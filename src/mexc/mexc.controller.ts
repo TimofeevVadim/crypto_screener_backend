@@ -10,16 +10,16 @@ export class MexcController {
     constructor(
         private readonly mexcService: MexcService,
     ) {}
-
-    private async onStart() {
-        setInterval(async () => {
-        console.log('onStart Mexc')
-        MexcController.tickers = await this.mexcService.getTickets()
-        }, timeouts.tickersTimeout)
+    
+    public static async getTickets() {
+        return await MexcService.getTickets()
     }
     public static async getOrderBook(symbol) {
         return await MexcService.getOrderBook(symbol)
     }
+    public static async fetchCurrencies() {
+        return await MexcService.fetchCurrencies()
+      }
     public static async getDepositAddress(currency) {
         return await MexcService.getDepositAddress(currency)
     }
@@ -31,6 +31,5 @@ export class MexcController {
     }
 
     async onModuleInit() {
-        this.onStart()
     }
 }

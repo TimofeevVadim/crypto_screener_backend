@@ -7,7 +7,13 @@ import { onFilterCurrencyPairs } from 'src/utils/helpers';
 export class HuobiService {
     private static exchange: Exchange = {} as Exchange;
     constructor() {
-      HuobiService.exchange = new huobi();
+      const apiKey = process.env.HUOBI_API_KEY
+      const secret = process.env.HUOBI_API_SECRET
+      HuobiService.exchange = new huobi({
+        apiKey,
+        secret,
+        enableRateLimit: true
+      });
     }
     /**
      * getTickets
@@ -17,12 +23,15 @@ export class HuobiService {
       return await HuobiService.exchange.fetchOrderBook(symbol);
     }
     public static async getDepositAddress(currency) {
-      return await HuobiService.exchange.fetchDepositAddress(currency);
+      return await HuobiService.exchange.fetchDepositAddresses([currency]);
+    }
+    public static async fetchCurrencies() {
+      return await HuobiService.exchange.fetchCurrencies();;
     }
     public static async getFundingFees() {
       return await HuobiService.exchange.fetchTransactionFees();
     }
-    public async getTickets(): Promise<{[key: string]: Ticker}> {
+    public static async getTickets(): Promise<{[key: string]: Ticker}> {
       try {
         const tickers = await HuobiService.exchange.fetchTickers();
         return onFilterCurrencyPairs({ tickers: Object.values(tickers) });

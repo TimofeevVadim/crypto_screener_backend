@@ -116,10 +116,12 @@ const onPushFinalyObject = (result, {lTicker, hTicker, pair, lName, hName}) => {
     })
     
     if(
-        finalyObject.persent > 2 &&
-        finalyObject.persent < 40 &&
-        finalyObject.lover.volumeUSDT > 5 &&
-        finalyObject.high.volumeUSDT > 5 
+        finalyObject.persent > 1 &&
+        finalyObject.persent < 100
+        // finalyObject.persent > 2 &&
+        // finalyObject.persent < 100 &&
+        // finalyObject.lover.volumeUSDT > 5 &&
+        // finalyObject.high.volumeUSDT > 5 
     ) {
         result.push(finalyObject) 
     }
@@ -180,7 +182,7 @@ export const onFindPriceDifference = (tickers) => {
     return result
 }
 
-export const parseOrderBook = ({asks, bids, ticker, loverFee, highFee }) => {
+export const parseOrderBook = ({ asks, bids, ticker }) => {
     
     let loverPrice = 0
     let highPrice = 0
@@ -190,12 +192,12 @@ export const parseOrderBook = ({asks, bids, ticker, loverFee, highFee }) => {
     let index = 0
     let currentPersent = ticker.persent
 
-    while (currentPersent > 1.5 && index < asks.length) {
+    while (currentPersent > 1 && index < asks.length) {
        const ask = asks[index] 
        const bid = bids[index]
        if(ask && ask.length === 2 && bid && bid.length === 2) {
           currentPersent = ((bid[0] - ask[0]) / ask[0]) * 100
-          if(currentPersent > 1.5) {
+          if(currentPersent > 1) {
              persent = currentPersent
              loverVolume += ask[1] * ask[0]
              highVolume += bid[1] * bid[0]
@@ -213,15 +215,75 @@ export const parseOrderBook = ({asks, bids, ticker, loverFee, highFee }) => {
     ticker.lover.allVolumeUSDT = parseFloat(loverVolume.toFixed(0))
     ticker.lover.volumeUSDT = parseFloat(minLoverVolume.toFixed(0))
     ticker.lover.maxPrice = loverPrice
-    ticker.lover.fee = loverFee
+
     ticker.high.allVolumeUSDT = parseFloat(highVolume.toFixed(0))
     ticker.high.volumeUSDT = parseFloat(minHighVolume.toFixed(0))
     ticker.high.maxPrice = highPrice
-    ticker.high.fee = highFee
+
     ticker.minPersent = parseFloat(persent.toFixed(2))
     ticker.persent = parseFloat(maxPersent.toFixed(2))
 
     return ticker
 }
+export const addInformationPossibilityTranslation = (ticker, currencies) => {
+    const currency = ticker.pair.split("/")[0]
 
-export default { onFilterCurrencyPairs, onFindPriceDifference, parseOrderBook }
+    const loverExchangeCurrencies = currencies[ticker.lover.exchange][currency]
+    const highExchangeCurrencies  = currencies[ticker.high.exchange][currency]
+
+    const loverChains = Object.values(loverExchangeCurrencies?.networks) || loverExchangeCurrencies?.info?.networkList
+    const highChains = Object.values(highExchangeCurrencies?.networks) || highExchangeCurrencies?.info?.networkList
+
+    if(Array.isArray(loverChains) && loverChains.length && Array.isArray(highChains) && highChains.length) {
+        const getActiveChains = (chains) => {
+            const keys = []
+            chains.forEach(item => {
+                if(item.active !== undefined && item.active) {
+                    keys.push({chain: item.network, fee: item.fee})
+                } else if(item.info && (item.info.withdrawable === 'true' || item.info.withdrawable === true) && (item.info.rechargeable === 'true' || item.info.rechargeable === true)) {
+                    keys.push({chain: item.network, fee: item.fee})
+                }
+            })
+            return keys
+        }
+        const lActiveChains = getActiveChains(loverChains)
+        const hActiveChains = getActiveChains(highChains)
+        // console.log(ticker.lover.exchange, 'l exchange')
+        // if(ticker.lover.exchange === 'huobi' || ticker.lover.exchange === 'bitget') {
+        //     console.log('---------------------------------------------------------------------------------------')
+        //     console.log(currency, 'currency')
+        //     console.log(ticker.lover.exchange, 'l exchange')
+        //     console.log(loverChains, 'loverChains')
+        //     // console.log(ticker.high.exchange, 'h exchange')
+        //     // console.log(hChainsKeys, 'highChains')
+        //     console.log('---------------------------------------------------------------------------------------')
+        
+        // }
+
+        const result = lActiveChains.reduce((acc, item1) => {
+            const item2 = hActiveChains.find(item => item.chain === item1.chain);
+            if (item2) {
+            acc.push({ lover: item1, high: item2 });
+            }
+            return acc;
+        }, []);
+        console.log('---------------------------------------------------------------------------------------')
+        console.log(currency, 'currency')
+        console.log(ticker.lover.exchange, 'l exchange')
+        console.log(ticker.high.exchange, 'h exchange')
+        console.log(result, 'result')
+        console.log('---------------------------------------------------------------------------------------')
+        ticker.lover.chains = result.map(item => item.lover)
+        ticker.high.chains = result.map(item => item.high)
+
+        const lFee = (ticker.lover.chains.length ? ticker.lover.chains[0].fee : 0) * ticker.lover.maxPrice
+        const hFee = (ticker.high.chains.length ? ticker.high.chains[0].fee : 0) * ticker.high.maxPrice
+        ticker.lover.fee = lFee ? parseFloat(lFee.toFixed(2)) : 0
+        ticker.high.fee = hFee ? parseFloat(hFee.toFixed(2)) : 0
+
+        ticker.hasChain = !!ticker.lover.chains.length && !!ticker.high.chains.length
+    }
+
+    return ticker
+}
+export default { onFilterCurrencyPairs, onFindPriceDifference, parseOrderBook, addInformationPossibilityTranslation }

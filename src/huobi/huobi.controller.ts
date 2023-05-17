@@ -11,16 +11,12 @@ export class HuobiController {
         private readonly huobiService: HuobiService,
     ) {}
 
-    private async onStart() {
-        setInterval(async () => {
-            console.log('onStart Huobi')
-            HuobiController.tickers = await this.huobiService.getTickets()
-        }, timeouts.tickersTimeout)
+    public static async getTickets() {
+        return await HuobiService.getTickets()
     }
-
-    public static getTickers() {
-        return this.tickers
-    }
+    public static async fetchCurrencies() {
+        return await HuobiService.fetchCurrencies()
+      }
     public static async getOrderBook(symbol) {
         return await HuobiService.getOrderBook(symbol)
     }
@@ -31,6 +27,5 @@ export class HuobiController {
         return await HuobiService.getFundingFees()
       }
     async onModuleInit() {
-        this.onStart()
     }
 }
