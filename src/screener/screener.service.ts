@@ -13,14 +13,14 @@ import { onFindPriceDifference, parseOrderBook, addInformationPossibilityTransla
 @Injectable()
 export class ScreenerService {
    public controllers = {
-      bybit: BybitController,
+      // bybit: BybitController,
       binance: BinanceController,
       // okx: OkxController,
       // gate: GateController,
       bitget: BitgetController,
       huobi: HuobiController,
       mexc: MexcController,
-      // kukoin: KukoinController
+      kukoin: KukoinController
    }
    public async getCompliteInformation(ticker) {
       const currency = ticker.pair.split('/')[0]
@@ -51,8 +51,9 @@ export class ScreenerService {
       const data = {}
       const exchanges = Object.keys(this.controllers)
       for (let i = 0; i < exchanges.length; i++) {
-         const currencys = await this.controllers[exchanges[i]].fetchCurrencies();
-         data[exchanges[i]] = currencys
+         const currencies = await this.controllers[exchanges[i]].fetchCurrencies();
+         // console.log(currencys, 'currencys')
+         data[exchanges[i]] = currencies
       }
       return data
    }
@@ -67,12 +68,12 @@ export class ScreenerService {
    }
    public async getTickers() {
       console.log('start')
-      const currencys = await this.getCurrencies()
+      const currencies = await this.getCurrencies()
       const currentTickers = await this.fetchTickers()
       const tickers = onFindPriceDifference(currentTickers)
 
-        const finalyTickers = await this.getFinalyTickers(tickers, currencys)
+      const finalyTickers = await this.getFinalyTickers(tickers, currencies)
       console.log('end')
-      return finalyTickers.filter( ticker => ticker.hasChain )
+      return finalyTickers
    }
 }

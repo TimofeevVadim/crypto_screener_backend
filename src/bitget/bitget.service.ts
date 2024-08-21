@@ -19,7 +19,9 @@ export class BitgetService {
       return await BitgetService.exchange.fetchOrderBook(symbol);
     }
     public static async fetchCurrencies() {
-      return await BitgetService.exchange.fetchCurrencies();;
+      const data = await BitgetService.exchange.loadMarkets()
+      // console.log(data, 'data')
+      return await BitgetService.exchange.fetchCurrencies();
     }
     public static async getDepositAddress(currency) {
       return await BitgetService.exchange.fetchDepositAddresses([currency]);

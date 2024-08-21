@@ -33,8 +33,9 @@ export class MexcService {
     }
     public static async getTickets(): Promise<{[key: string]: Ticker}> {
         try {
-            const tickers = await MexcService.exchange.fetchTickers();
-            return onFilterCurrencyPairs({ tickers: Object.values(tickers) });
+            const tickers = await MexcService.exchange.fetchMarkets();
+            const futures = tickers.filter((market) => market.type === 'future')
+            return onFilterCurrencyPairs({ tickers: Object.values(futures) });
           } catch (error) {
             console.log(error)
             return {}

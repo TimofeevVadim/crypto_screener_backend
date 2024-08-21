@@ -22,16 +22,26 @@ export class BinanceService {
     return await BinanceService.exchange.fetchOrderBook(symbol);
   }
   public static async getDepositAddress(currency) {
-    return await BinanceService.exchange.fetchDepositAddresses([currency]);;
+    return await BinanceService.exchange.fetchDepositAddresses([currency]);
   }
   public static async fetchCurrencies() {
-    return await BinanceService.exchange.fetchCurrencies();;
+    return await BinanceService.exchange.fetchCurrencies();
   }
   public static async getFundingFees() {
     return await BinanceService.exchange.fetchTransactionFees();
   }
+  public static async getMarketsFutures(): Promise<{[key: string]: Ticker}> {
+    try {
+      const markets = await BinanceService.exchange.fetchMarkets();
+      const futuresMarkets = markets.filter((market) => market.type === 'future');
+    } catch (error) {
+      console.log(error)
+      return {}
+    }
+  }
   public static async getTickets(): Promise<{[key: string]: Ticker}> {
     try {
+      await this.getMarketsFutures()
       const tickers = await BinanceService.exchange.fetchTickers();
       return onFilterCurrencyPairs({ tickers: Object.values(tickers) });
     } catch (error) {

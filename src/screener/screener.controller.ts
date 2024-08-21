@@ -22,6 +22,7 @@ export class ScreenerController {
     }
     @Get('/get-tickers')
     async getTickers(): Promise<any> {
+        console.log(this.tickers)
       return this.tickers
     }
 }
